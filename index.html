@@ -1,0 +1,561 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}#plantSel{font:inherit;font-weight:600;padding:9px 16px;border:1px solid var(--line);border-radius:999px;background:var(--field);color:inherit;min-width:300px;cursor:pointer}
+</style></head><body>
+<title>Potencial Mecanismos RD Hoteles Estelar</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap">
+<style>
+/* Layout: columna de controles a la izquierda; resultado, gráfica horaria y comparación por tipo de día a la derecha. En móvil todo apila. */
+:root{
+  --bg:#FBF7F2; --surface:#FFFFFF; --line:#E8E2DA; --fg:#1D1D1F; --muted:#5B5F66;
+  --orange:#F28322; --orange-ink:#A94E00; --red:#E8194F; --peach:#FDE8DA; --on-orange:#1D1D1F;
+  --bar:#CFC9C1; --bar-after:#8F8980; --field:#FFFFFF; --focus:#1D1D1F;
+  --font:'Poppins',Arial,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#17181A; --surface:#212326; --line:#35383C; --fg:#F3F1EE; --muted:#A9ADB3;
+  --orange:#FF9A4A; --orange-ink:#FFA961; --red:#FF5C86; --peach:#3A2A1E; --on-orange:#1D1D1F;
+  --bar:#4A4D52; --bar-after:#7A7E84; --field:#2A2C30; --focus:#F3F1EE; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#17181A; --surface:#212326; --line:#35383C; --fg:#F3F1EE; --muted:#A9ADB3;
+  --orange:#FF9A4A; --orange-ink:#FFA961; --red:#FF5C86; --peach:#3A2A1E; --on-orange:#1D1D1F;
+  --bar:#4A4D52; --bar-after:#7A7E84; --field:#2A2C30; --focus:#F3F1EE; color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font-family:var(--font);font-size:15px;line-height:1.5}
+*{box-sizing:border-box}
+.wrap{max-width:1180px;margin-inline:auto;padding-inline:20px;padding-block:28px 48px;display:flex;flex-direction:column;gap:24px}
+header{display:flex;flex-direction:column;gap:6px}
+.hdr{background:#212326;color:#fff;border:1px solid var(--line);border-radius:14px;padding:20px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.hdr h1{display:flex;flex-direction:column;gap:8px;align-items:flex-start}
+.h1s{font-size:clamp(16px,2.2vw,22px);font-weight:500;line-height:1.3;color:#D6D8DB;max-width:60ch}
+.h1u{display:inline-flex;align-items:center;gap:10px;font-size:clamp(16px,2vw,20px);font-weight:700;background:var(--orange);color:#1D1D1F;border-radius:999px;padding:6px 16px 6px 12px}
+.h1u i{width:10px;height:10px;border-radius:50%;background:#1D1D1F}
+.hdr h1{font-size:clamp(28px,4.4vw,44px)}
+.hdr .brand,.hdr h1,.hdr .sub{color:#fff}.hdr h1 .h1u{color:#1D1D1F}.hdr h1 .h1s{color:#D6D8DB}
+.logo{height:84px;width:auto;flex:none}
+@media(max-width:640px){.hdr{flex-direction:column-reverse;align-items:flex-start}.logo{height:64px}}
+.brand{display:flex;align-items:center;gap:8px;font-weight:600;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--orange-ink)}
+.sq{width:12px;height:12px;display:inline-block}
+h1{font-size:clamp(26px,4vw,38px);line-height:1.1;font-weight:800;text-wrap:balance;margin:0}
+.sub{color:var(--muted);margin:0;max-width:70ch}
+.plantbar{display:flex;flex-wrap:wrap;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 20px}
+.plantbar .pl{font-weight:700}
+.plantbar .seg label{padding:9px 18px;font-weight:600}
+.tabs{display:flex;gap:8px;border-bottom:1px solid var(--line)}
+.tabb{font:inherit;font-weight:700;font-size:16px;padding:10px 26px;border:1px solid var(--line);border-bottom:0;border-radius:12px 12px 0 0;background:var(--field);color:var(--muted);cursor:pointer;margin-bottom:-1px}
+.tabb.on{background:var(--orange);border-color:var(--orange);color:var(--on-orange)}
+.tabb:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+#tab-ddv:not([hidden]){display:flex}
+.ddvin{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
+.ddvin .lbl{display:block;font-weight:600;font-size:14px;margin-bottom:6px}
+.ddvin input{width:100%}.ddvin .fixed{padding:9px 12px;border:1px solid var(--line);border-radius:10px;background:var(--peach);font-weight:700}
+.ddv th{vertical-align:bottom}.ddv td,.ddv th{text-align:right}.ddv td:first-child,.ddv th:first-child{text-align:left}
+.ddv .pin{font-weight:500;font-size:13px;white-space:nowrap}.ddv .pin input{width:64px}
+.ddv input.dd{width:56px}
+.ddv tfoot td{font-weight:800;color:var(--orange-ink)}
+.layout{display:grid;grid-template-columns:minmax(0,1fr);gap:20px}
+@media (min-width:920px){.layout{grid-template-columns:minmax(0,370px) minmax(0,1fr)}}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px;display:flex;flex-direction:column;gap:18px;min-width:0}
+.stack{display:flex;flex-direction:column;gap:20px;min-width:0}
+h2{font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--orange-ink);margin:0}
+.field{display:flex;flex-direction:column;gap:8px;border:0;padding:0;margin:0;min-width:0}
+.field>label,.field>legend{font-weight:600;font-size:14px;padding:0}
+.hint{font-size:13px;color:var(--muted);margin:0}
+.seg{display:flex;flex-wrap:wrap;gap:6px}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg label{padding:7px 12px;border:1px solid var(--line);border-radius:999px;cursor:pointer;font-size:14px;background:var(--field);user-select:none}
+.seg input:checked+label{background:var(--orange);border-color:var(--orange);color:var(--on-orange);font-weight:600}
+.seg input:focus-visible+label{outline:2px solid var(--focus);outline-offset:2px}
+input[type=number],select{font:inherit;color:var(--fg);background:var(--field);border:1px solid var(--line);border-radius:10px;padding:8px 10px;width:100%;min-width:0}
+input[type=range]{width:100%;accent-color:var(--orange)}
+input:focus-visible,select:focus-visible,button:focus-visible,summary:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.inline{display:flex;gap:10px;align-items:center}
+.inline input[type=number]{width:96px;flex:none}
+.btns{display:flex;gap:8px;flex-wrap:wrap}
+button.ghost{font:inherit;font-size:13px;background:transparent;color:var(--fg);border:1px solid var(--line);border-radius:999px;padding:6px 12px;cursor:pointer}
+button.ghost:hover{border-color:var(--orange)}
+.hero{display:flex;flex-direction:column;gap:16px}
+@media (min-width:640px){.hero{grid-template-columns:minmax(0,1.2fr) minmax(0,1fr)}}
+.big{display:flex;flex-direction:column;gap:2px;background:var(--peach);border-radius:12px;padding:16px 20px}
+.big .lbl{font-size:14px;color:var(--muted)}
+.big .num{font-size:clamp(40px,7vw,60px);font-weight:800;line-height:1.05;color:var(--orange-ink);font-variant-numeric:tabular-nums}
+.big .aux{font-size:14px;color:var(--muted)}
+.kpis{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;align-content:start}@media(min-width:640px){.kpis.k3{grid-template-columns:repeat(3,minmax(0,1fr))}}.kpis.k3 .kpi{min-height:92px;display:flex;flex-direction:column;justify-content:center}
+.kpi{background:var(--peach);border-radius:10px;padding:10px 12px;min-width:0}
+.kpi b{display:block;font-size:20px;font-variant-numeric:tabular-nums;line-height:1.2}
+.kpi span{font-size:13px;color:var(--muted)}
+.scroll{overflow-x:auto;min-width:0}
+table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
+th,td{padding:9px 10px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}
+th:first-child,td:first-child{text-align:left;white-space:normal}
+th{font-size:13px;color:var(--muted);font-weight:600}
+tr.total td{background:var(--peach);font-weight:700;border-bottom:0}
+tr.total td:last-child{color:var(--orange-ink)}
+.chartbox{position:relative;min-width:0}
+svg.chart{width:100%;height:auto;display:block;overflow:visible}
+svg text{font-family:var(--font);font-size:11px;fill:var(--muted)}
+.hit{fill:transparent;cursor:pointer}
+g.col:focus{outline:none}
+g.col:focus-visible .focusring{stroke:var(--focus);stroke-width:2}
+.focusring{fill:none;stroke:none}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:13px;color:var(--muted)}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.tip{position:absolute;top:0;pointer-events:none;background:var(--fg);color:var(--bg);border-radius:10px;padding:8px 12px;font-size:13px;line-height:1.4;white-space:nowrap;transform:translateX(-50%);display:none;z-index:2}
+.tip b{display:block}
+.cmp{display:flex;flex-direction:column;gap:6px}
+.cmp button{all:unset;box-sizing:border-box;cursor:pointer;display:grid;grid-template-columns:84px minmax(0,1fr) 92px;gap:10px;align-items:center;padding:6px 8px;border-radius:8px;font-size:14px}
+.cmp button:hover{background:var(--peach)}
+.cmp button:focus-visible{outline:2px solid var(--focus)}
+.cmp button[aria-pressed=true]{background:var(--peach);font-weight:600}
+.cmp .track{height:12px;background:var(--line);border-radius:6px;overflow:hidden}
+.cmp .fill{height:100%;background:var(--bar-after);border-radius:6px}
+.cmp button[aria-pressed=true] .fill{background:var(--orange)}
+.cmp .v{text-align:right;font-variant-numeric:tabular-nums}
+details summary{cursor:pointer;font-weight:600}
+.note{font-size:13px;color:var(--muted);margin:0}
+.warn{color:var(--red);font-weight:600}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+@media (prefers-reduced-motion:no-preference){.fill{transition:width .2s}}
+.parttbl input{width:72px;padding:6px 8px}
+.parttbl tr.off td{color:var(--muted)}
+button.link{all:unset;cursor:pointer;color:var(--orange-ink);font-weight:600;text-decoration:underline;text-underline-offset:3px}
+button.link:disabled{cursor:default;color:var(--muted);text-decoration:none}
+button.link:focus-visible{outline:2px solid var(--focus)}
+.parttbl tfoot td{border-bottom:0}
+.calhead{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.calhead strong{font-size:17px}
+.calhead .ghost{width:40px;height:36px;font-size:18px;padding:0}
+.calhead .ghost:disabled{opacity:.35;cursor:default}
+.cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
+.cal .wd{all:unset;box-sizing:border-box;text-align:center;font-size:13px;font-weight:600;color:var(--muted);padding:6px 0;cursor:pointer;border-radius:8px}
+.cal .wd:hover{background:var(--peach)}
+.cal .wd:focus-visible,.cal .day:focus-visible{outline:2px solid var(--focus);outline-offset:1px}
+.cal .day{all:unset;box-sizing:border-box;min-height:46px;display:flex;flex-direction:column;align-items:center;justify-content:center;border:1px solid var(--line);border-radius:10px;background:var(--field);cursor:pointer;font-variant-numeric:tabular-nums}
+.cal .day b{font-weight:600}
+.cal .day:hover{border-color:var(--orange)}
+.cal .day[aria-pressed=true]{background:var(--orange);border-color:var(--orange);color:var(--on-orange)}
+.cal .day.fest{border:1px dashed var(--red)}
+.cal .day.hol{cursor:default;border:1px dashed var(--red);color:var(--muted);background:transparent}
+.cal .day.hol small{font-size:10px;color:var(--red);line-height:1}
+.cal .day:focus-visible{outline:2px solid var(--focus)}
+.field>.lbl{font-weight:600;font-size:14px}
+.calhead select{flex:1;min-width:0}
+.cal .day{min-height:40px}
+.cal{gap:5px}
+.seg.small label{padding:6px 11px}
+.penal{border-top:1px solid var(--line);padding-top:16px}
+.pen-out{margin:0;display:flex;flex-direction:column;gap:4px;font-weight:600;font-variant-numeric:tabular-nums;background:var(--peach);border-radius:10px;padding:10px 12px}
+.kpi.hl{background:var(--orange);color:var(--on-orange)}
+.kpi.hl b{font-size:22px;line-height:1.15}
+.kpi.hl b.hr{font-size:15px;margin-top:2px;padding-bottom:4px}
+.kpi.hl span{color:var(--on-orange);font-weight:500}
+details.rule summary{font-size:13px;color:var(--orange-ink)}
+.pen-val{font-size:18px;color:var(--orange-ink)}
+.pen-sub{font-size:13px;font-weight:400;color:var(--muted)}
+.chk{display:flex;gap:8px;align-items:flex-start;font-size:13px;color:var(--muted);font-weight:400}
+.chk input{margin-top:3px;accent-color:var(--orange)}
+.pen-val2{font-size:16px}
+</style>
+
+<div class="wrap">
+<header>
+  <div class="hdr"><div style="display:flex;flex-direction:column;gap:6px"><div class="brand"><span class="sq" style="background:var(--orange)"></span><span class="sq" style="background:var(--red);margin-left:-4px"></span>JULIA-RD · Respuesta de la Demanda</div>
+  <h1>Potencial de Ingresos<span class="h1s"> Participación Mecanismos de Respuesta de la Demanda</span><span class="h1u"><i></i><span id="chipTxt">Hoteles Estelar</span></span></h1></div><img class="logo" alt="JULIA-RD Respuesta de la Demanda" src="data:image/png;base64,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"></div>
+</header>
+
+<div class="plantbar" role="group" aria-label="Frontera a modelar"><span class="pl">Frontera a modelar</span><div class="seg" id="plantSeg"></div><span class="hint" style="margin:0">LBC horaria calculada por JULIA-RD (corte 19 de octubre de 2026). Si no hay valor: margen de error superior al 20 %.</span></div>
+<div id="lbcWarn" hidden style="background:#FDEBDD;border:2px solid #F0842C;border-radius:12px;padding:12px 18px;font-weight:600;color:#7a1a2c"></div>
+
+<div class="tabs" role="tablist" aria-label="Mecanismo"><button type="button" role="tab" id="tabB-rd" aria-selected="true" aria-controls="tab-rd" class="tabb on">RD</button><button type="button" role="tab" id="tabB-ddv" aria-selected="false" aria-controls="tab-ddv" class="tabb">DDV</button></div>
+
+<div id="tab-rd" role="tabpanel" aria-labelledby="tabB-rd" style="display:flex;flex-direction:column;gap:24px">
+
+<div class="layout">
+  <section class="panel" aria-label="Parámetros">
+    <h2>Su escenario</h2>
+    <div class="field"><span class="lbl">Días de participación</span>
+      <p class="hint">Toque los días en que reduciría. Toque Lu, Ma… para elegir todos los de ese mes. Los festivos también se pueden elegir.</p>
+      <div class="calhead"><button type="button" class="ghost" id="prev" aria-label="Mes anterior">‹</button><select id="month" aria-label="Mes"></select><button type="button" class="ghost" id="next" aria-label="Mes siguiente">›</button></div>
+      <div class="cal" id="cal"></div>
+      <div class="btns">
+        <button type="button" class="ghost" id="pWk">Lunes a viernes</button>
+        <button type="button" class="ghost" id="pAll">Todos los días</button>
+        <button type="button" class="ghost" id="pNone">Limpiar mes</button>
+        <button type="button" class="ghost" id="pWkAll">Lun–Vie en todos los meses</button>
+        <button type="button" class="ghost" id="pNoneAll">Limpiar todo</button>
+      </div>
+      <div class="legend"><span><i style="background:var(--orange)"></i>Día de reducción</span><span><i style="background:var(--field);border:1px dashed var(--red)"></i>Festivo</span></div>
+    </div>
+
+    <div class="field"><label for="from">Horas de participación</label>
+      <div class="row2">
+        <select id="from" aria-label="Desde"></select>
+        <select id="to" aria-label="Hasta"></select>
+      </div>
+      <div class="btns">
+        <button type="button" class="ghost" id="allH">Todo el día</button>
+        <button type="button" class="ghost" id="noneH">Quitar horas</button>
+      </div>
+      <p class="hint">También puede tocar cada barra de la gráfica para sumar o quitar una hora.</p>
+    </div>
+
+    <fieldset class="field"><legend>Energía a reducir</legend>
+      <div class="seg" id="modeSeg">
+        <input type="radio" name="mode" id="m-pct" value="pct" checked><label for="m-pct">% de la línea base</label>
+        <input type="radio" name="mode" id="m-kwh" value="kwh"><label for="m-kwh">kWh por hora</label>
+      </div>
+      <div id="pctBox" class="inline"><input type="range" id="pctRange" min="0" max="100" step="1" value="60" aria-label="Porcentaje de reducción"><input type="number" id="pct" min="0" max="100" step="1" value="60" aria-label="Porcentaje"><span>%</span></div>
+      <div id="kwhBox" class="inline" hidden><input type="number" id="kwh" min="0" step="100" value="2000" aria-label="kWh por hora"><span>kWh en cada hora elegida</span></div>
+    </fieldset>
+
+    <div class="field"><label for="price">Precio RD ($/kWh)</label><input type="number" id="price" min="0" step="10" value="861"></div>
+
+    <div class="field penal"><label for="dev">Penalidad por desviaciones</label>
+      <div class="inline"><input type="number" id="dev" min="0" step="10" value="0" aria-describedby="penHint"><span>kWh que no cumple por hora</span></div>
+      <p class="pen-out" id="penOut"></p>
+      <label class="chk"><input type="checkbox" id="grace" checked> Primeros 6 meses sin penalidad (nov. 2026 a abr. 2027)</label>
+      <p class="hint" id="penHint">Energía que deja de cumplir en cada hora de reducción, frente a lo ofertado. Hasta el 5 % de lo ofertado en esa hora no hay penalidad, y tampoco en los primeros 6 meses (nov. 2026 a abr. 2027). Lo ideal es 0, y es el valor por defecto.</p>
+      <details class="rule"><summary>Cómo se calcula</summary>
+        <p class="hint">Hay un rango de desviación del 5 % sobre lo ofertado. Si la diferencia entre lo ofertado y lo verificado está dentro del rango, no hay penalidad. Si lo supera, el ASIC cobra el 30 % del precio RD ofertado multiplicado por toda la diferencia en kWh (Anexo A de la Resolución CREG 024 de 1995).</p>
+        <p class="hint">Ejemplo: se compromete con 1.000 kWh. Si falla por 50 kWh (5 %), no paga nada. Si falla por 100 kWh (10 %), paga 30 % del precio RD × 100 kWh. Durante los primeros 6 meses del programa (noviembre de 2026 a abril de 2027) no existe penalidad; desde mayo de 2027 se aplica.</p>
+      </details>
+    </div>
+    <p class="note">Se descuenta margen JULIA-RD del 8 % y GMF 4 × 1.000 (0,4 %) sobre el ingreso bruto, y la penalidad si hay desviación. Las horas y la reducción valen para todos los días en que participe.</p>
+  </section>
+
+  <div class="stack">
+    <section class="panel" aria-live="polite">
+      <h2>Ingreso neto estimado</h2>
+      <div class="hero">
+        <div class="big"><span class="lbl" id="heroLbl">Total del mes</span><span class="num" id="netMonth">—</span><span class="aux" id="netDay">—</span></div>
+        <div class="kpis k3">
+          <div class="kpi hl"><b id="kED">—</b><b class="hr" id="kEH">—</b><span id="kEDl"></span></div>
+          <div class="kpi"><b id="kE">—</b><span>kWh a reducir en el mes</span></div>
+          <div class="kpi"><b id="kD">—</b><span>días de participación</span></div>
+          <div class="kpi"><b id="kP">—</b><span id="kPl">penalidad del mes</span></div>
+          <div class="kpi"><b id="kH">—</b><span>horas por día</span></div>
+          <div class="kpi"><b id="kK">—</b><span>neto por kWh reducido</span></div>
+        </div>
+      </div>
+      <div class="scroll"><table>
+        <thead><tr><th>Concepto</th><th id="thDay">Promedio por día elegido</th><th>Total del mes</th></tr></thead>
+        <tbody>
+          <tr><td>Ingreso bruto RD</td><td id="gD"></td><td id="gM"></td></tr>
+          <tr><td>Margen JULIA-RD · 8 %</td><td id="mD"></td><td id="mM"></td></tr>
+          <tr><td>GMF · 4 × 1.000</td><td id="fD"></td><td id="fM"></td></tr>
+          <tr><td id="pnLbl">Penalidad por desviación · 30 %</td><td id="pnD"></td><td id="pnM"></td></tr>
+          <tr class="total"><td>Ingreso neto</td><td id="nD"></td><td id="nM"></td></tr>
+        </tbody></table></div>
+    </section>
+
+    <section class="panel">
+      <h2 id="chartTitle">Línea base por hora</h2>
+      <fieldset class="field"><legend class="sr">Tipo de día de la gráfica</legend><div class="seg" id="daySeg"></div></fieldset>
+      <div class="kpis" style="margin:0 0 12px">
+        <div class="kpi hl" style="grid-column:auto"><span>LBC diaria (suma de las 24 h)</span><b id="lbDay">0 kWh</b></div>
+        <div class="kpi hl" style="grid-column:auto"><span>Reducción diaria</span><b id="lbRed">0 kWh</b><span id="lbPct"></span></div>
+      </div>
+      <div class="legend">
+        <span><i style="background:var(--bar)"></i>Línea base (kWh por hora)</span>
+        <span><i style="background:var(--bar-after)"></i>Consumo con RD</span>
+        <span><i style="background:var(--orange)"></i>Energía a reducir</span>
+      </div>
+      <div class="chartbox" id="chartbox">
+        <svg class="chart" id="chart" viewBox="0 0 720 290" role="group" aria-label="Línea base por hora y energía a reducir"></svg>
+        <div class="tip" id="tip" role="status"></div>
+      </div>
+      <p class="note" id="winText"></p>
+    </section>
+
+        <section class="panel">
+      <h2>Ingreso del mes por tipo de día</h2>
+      <div class="scroll"><table class="parttbl">
+        <thead><tr><th>Tipo de día</th><th>Elegidos</th><th>kWh por día</th><th>Neto por día</th><th>Neto del mes</th></tr></thead>
+        <tbody id="part"></tbody>
+        <tfoot><tr class="total"><td>Total</td><td id="pTotDays"></td><td></td><td></td><td id="pTot"></td></tr></tfoot>
+      </table></div>
+    </section>
+
+    <section class="panel">
+      <h2>Resumen 2026 – 2027</h2>
+      <p class="note">Todos los meses en que haya elegido días, con el mismo escenario de horas, reducción y precio.</p>
+      <div class="scroll"><table class="parttbl">
+        <thead><tr><th>Mes</th><th>Días</th><th>Neto del mes</th></tr></thead>
+        <tbody id="sumRows"></tbody>
+        <tfoot><tr class="total"><td>Total</td><td id="sumDays"></td><td id="sumTot"></td></tr></tfoot>
+      </table></div>
+    </section>
+
+    <section class="panel">
+      <details>
+        <summary>Detalle hora a hora</summary>
+        <div class="scroll" style="margin-top:12px"><table>
+          <thead><tr><th>Hora</th><th>Línea base kWh</th><th>Reducir kWh</th><th>Ingreso bruto</th></tr></thead>
+          <tbody id="detail"></tbody></table></div>
+      </details>
+    </section>
+  </div>
+</div>
+<p class="note">Estimación con la línea base horaria calculada por JULIA-RD (15 de octubre de 2026). El ingreso efectivo depende del precio de la bolsa en la ventana convocada y de cumplir lo ofertado hora a hora.</p>
+<p class="note">* No se tienen en cuenta descuentos adicionales, como el descuento por estampillas o por la resolución CREG 031-2021.</p>
+</div>
+
+<div id="tab-ddv" role="tabpanel" aria-labelledby="tabB-ddv" hidden style="flex-direction:column;gap:20px">
+  <section class="panel">
+    <h2>DDV · Ingreso mensual por escenario de precio</h2>
+    <p class="hint" style="margin:0">Ingreso = LBC kWh-día × días × precio (USD/MWh) × TRM ÷ 1000, menos el margen de JULIA-RD y el GMF (4 × 1.000). La LBC kWh-día es la LBC diaria registrada en JRD de la frontera seleccionada, en el tipo de día de mayor LBC.</p>
+    <div class="ddvin">
+      <label class="field"><span class="lbl">TRM de referencia (15 de octubre de 2026)</span><input type="number" id="trm" value="3197.65" min="0" step="0.01" inputmode="decimal"><small style="display:block;margin-top:6px;color:var(--muted);font-size:13px">COP por USD · última TRM del mes anterior, valor predeterminado (modificable)</small></label>
+      <div class="field"><span class="lbl">Margen JULIA-RD</span><div class="fixed">8 %</div></div>
+      <div class="field"><span class="lbl">GMF</span><div class="fixed">4 × 1.000</div></div>
+    </div>
+    <div class="scroll"><table class="parttbl ddv">
+      <thead><tr><th>Mes</th><th>LBC kWh-día</th><th>Días</th>
+        <th>Escenario conservador<br><span class="pin"><input type="number" id="pr0" value="4" min="0" step="0.5" inputmode="decimal"> USD/MWh</span></th>
+        <th>Escenario medio<br><span class="pin"><input type="number" id="pr1" value="6" min="0" step="0.5" inputmode="decimal"> USD/MWh</span></th>
+        <th>Escenario alto<br><span class="pin"><input type="number" id="pr2" value="8" min="0" step="0.5" inputmode="decimal"> USD/MWh</span></th></tr></thead>
+      <tbody id="ddvRows"></tbody>
+      <tfoot><tr><td colspan="3">Total</td><td id="ddvT0"></td><td id="ddvT1"></td><td id="ddvT2"></td></tr></tfoot>
+    </table></div>
+    <p class="note" style="margin:0">Cifras en pesos colombianos (COP). Puede cambiar los días de cada mes, el precio de cada escenario y la TRM.</p>
+    <p class="note" style="margin:0">* Por regulación, la liquidación se hace con la última TRM del mes. Como referencia se usa la del 15 de octubre de 2026 ($3.197,65), que puede ajustar para simular otros valores.</p>
+  </section>
+</div>
+</div>
+
+<script>
+const PLANTS={"Port": {"Lunes": {"l": [2131.73, 2111.86, 2143.83, 2130.49, 2159.58, 2231.79, 2389.56, 2522.17, 2653.3, 2723.78, 2779.48, 2850.63, 2903.87, 2779.18, 2808.04, 2689.01, 2812.08, 2875.52, 2838.63, 2764.98, 2722.25, 2598.53, 2479.94, 2253.43], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Martes": {"l": [2218.6, 2171.37, 2155.53, 2141.95, 1619.71, 1645.99, 1839.74, 1694.32, 1828.76, 2550.84, 2482.11, 2570.04, 2614.68, 2540.11, 2591.79, 3026.69, 2858.87, 2852.53, 2582.63, 2639.34, 2770.88, 2733.99, 2581.76, 2459.67], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Miercoles": {"l": [2332.74, 1655.53, 2167.6, 2161.73, 1918.12, 2066.76, 2190.54, 2411.19, 2468.81, 2499.17, 2557.35, 2627.31, 2602.49, 2649.17, 2629.65, 2598.23, 2692.91, 2972.49, 2700.93, 2578.57, 2453.84, 2685.24, 2554.53, 2359.5], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Jueves": {"l": [2257.17, 2212.76, 2215.11, 2205.32, 2238.96, 2299.5, 2539.19, 2786.15, 2665.4, 2899.8, 2947.92, 3113.57, 3122.46, 2961.07, 3164.69, 3055.22, 3126.73, 3101.21, 3153.85, 3043.6, 2966.05, 2784.94, 2638.49, 2387.91], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Viernes": {"l": [2362.82, 2306.17, 2378.44, 2367.1, 2341.88, 2442.42, 2614.89, 2869.92, 3020.96, 3099.66, 3093.24, 3077.38, 3059.46, 3169.27, 3195.98, 3144.68, 2892.22, 3031.68, 3088.81, 2856.18, 2780.94, 2756.23, 2769.66, 2549.0], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Sabado": {"l": [2120.73, 2230.01, 2170.28, 2174.62, 2148.96, 2186.6, 2270.4, 2578.25, 2109.68, 1898.79, 1933.84, 1933.18, 1726.4, 1692.61, 1706.13, 2241.91, 2447.23, 2443.11, 2453.17, 2733.49, 2857.79, 2789.41, 2574.31, 2452.99], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Domingo": {"l": [2333.08, 2213.95, 2197.96, 2086.86, 2093.42, 2188.91, 2381.0, 2423.69, 2534.52, 2619.19, 2677.63, 2632.39, 2766.56, 2692.9, 2727.37, 2750.23, 2701.6, 2702.71, 2724.14, 2246.5, 2217.8, 2160.06, 2009.79, 2188.3], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Festivo": {"l": [2430.72, 2360.6, 2334.91, 2333.45, 2368.19, 2447.76, 2499.64, 2545.55, 2757.01, 2860.41, 2900.39, 2830.11, 2620.51, 2662.66, 2606.11, 2600.94, 2695.54, 2688.15, 2642.1, 2538.08, 2528.9, 2434.38, 2322.69, 2056.48], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}}, "Frt32697": {"Lunes": {"l": [410.77, 424.71, 417.71, 415.57, 420.66, 435.13, 453.91, 466.5, 474.63, 488.09, 498.3, 518.27, 569.79, 548.72, 562.63, 614.2, 638.18, 597.45, 601.79, 543.14, 543.28, 498.85, 484.64, 436.86], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Martes": {"l": [417.13, 407.2, 398.36, 399.68, 387.88, 407.83, 464.01, 501.36, 533.7, 543.33, 516.9, 579.47, 596.01, 590.71, 615.52, 634.26, 643.38, 611.79, 569.72, 537.96, 534.27, 565.83, 516.5, 481.36], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Miercoles": {"l": [461.53, 448.82, 447.46, 440.78, 421.38, 473.54, 488.47, 509.56, 521.26, 523.51, 530.12, 564.95, 574.46, 580.34, 605.92, 638.81, 682.02, 654.43, 660.45, 613.78, 559.77, 584.33, 568.88, 477.54], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Jueves": {"l": [435.02, 433.01, 464.24, 458.83, 458.53, 452.13, 522.62, 545.39, 535.98, 535.07, 543.63, 566.37, 548.47, 522.25, 605.85, 638.97, 653.85, 650.62, 605.12, 555.0, 574.72, 573.7, 552.32, 482.6], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Viernes": {"l": [452.26, 446.19, 432.23, 429.86, 419.48, 430.17, 508.38, 526.93, 539.79, 548.11, 554.1, 569.46, 501.13, 587.18, 603.54, 596.02, 599.21, 604.43, 572.95, 529.59, 532.39, 525.85, 516.89, 457.53], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Sabado": {"l": [416.99, 439.77, 410.37, 405.07, 404.4, 428.1, 474.78, 493.74, 502.92, 553.07, 560.13, 537.11, 550.75, 541.76, 556.18, 554.75, 554.26, 559.57, 563.74, 540.86, 572.77, 536.42, 510.7, 462.23], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Domingo": {"l": [447.25, 434.06, 431.19, 420.9, 420.1, 445.18, 463.72, 419.74, 423.4, 416.82, 420.39, 449.14, 490.5, 480.75, 510.6, 552.6, 532.99, 548.53, 548.02, 521.15, 521.17, 522.24, 423.89, 391.21], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Festivo": {"l": [441.24, 423.01, 412.7, 403.58, 401.79, 415.18, 425.25, 438.36, 457.99, 485.95, 471.5, 431.31, 461.01, 491.64, 491.82, 496.7, 535.42, 518.0, 516.64, 485.91, 517.59, 488.41, 478.46, 413.98], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}}, "Frt32731": {"Lunes": {"l": [151.66, 150.4, 140.88, 141.44, 151.82, 151.34, 157.17, 170.98, 164.41, 172.24, 155.01, 151.61, 153.29, 150.39, 156.51, 155.75, 159.57, 168.17, 156.09, 164.41, 164.23, 159.18, 155.51, 148.67], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Martes": {"l": [139.69, 140.24, 142.28, 142.65, 141.04, 145.04, 158.23, 163.91, 171.85, 173.13, 152.82, 145.58, 151.24, 163.07, 164.95, 160.75, 160.22, 162.52, 168.85, 170.21, 168.15, 170.01, 163.35, 156.65], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Miercoles": {"l": [151.83, 151.08, 148.19, 146.01, 149.1, 159.16, 168.45, 170.67, 177.43, 175.4, 171.44, 170.13, 167.06, 161.93, 162.59, 160.94, 164.0, 168.13, 175.52, 177.7, 181.08, 183.35, 173.37, 161.41], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Jueves": {"l": [152.45, 148.77, 147.88, 149.83, 152.25, 163.95, 175.1, 179.04, 0.0, 180.21, 178.55, 176.75, 175.0, 183.62, 172.9, 169.6, 170.87, 173.3, 183.63, 184.45, 180.84, 174.29, 169.07, 156.94], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Viernes": {"l": [154.32, 151.94, 150.3, 148.21, 150.55, 162.1, 172.15, 179.31, 183.54, 181.99, 176.16, 169.22, 168.14, 162.07, 165.95, 149.99, 167.12, 176.5, 184.09, 181.35, 190.19, 171.17, 164.64, 154.95], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Sabado": {"l": [158.45, 156.21, 155.72, 155.18, 168.04, 155.95, 161.6, 169.57, 176.9, 179.65, 173.05, 165.58, 166.56, 159.79, 161.22, 159.24, 156.85, 158.74, 166.59, 170.53, 166.12, 152.58, 149.47, 140.63], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Domingo": {"l": [139.79, 138.06, 134.54, 0.0, 0.0, 0.0, 144.18, 152.43, 158.9, 160.01, 156.45, 148.86, 150.46, 150.9, 154.23, 149.48, 145.87, 143.6, 150.87, 153.23, 161.36, 161.6, 158.65, 153.06], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Festivo": {"l": [126.86, 130.52, 122.82, 124.64, 130.28, 139.93, 136.27, 141.11, 142.94, 145.12, 146.64, 134.57, 133.94, 132.52, 132.51, 134.08, 133.05, 132.33, 145.45, 139.0, 140.4, 140.45, 139.63, 132.35], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}}, "Frt33210": {"Lunes": {"l": [48.63, 45.88, 44.33, 44.31, 47.42, 54.57, 60.93, 71.98, 78.32, 82.42, 78.86, 79.97, 72.68, 80.96, 73.18, 78.04, 72.99, 76.21, 68.21, 62.86, 61.13, 63.59, 53.7, 49.33], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Martes": {"l": [46.54, 43.83, 44.57, 45.16, 44.33, 52.38, 59.13, 72.49, 75.19, 73.61, 71.93, 74.93, 75.08, 74.53, 80.53, 78.29, 73.65, 77.64, 68.46, 63.29, 61.06, 64.94, 54.09, 50.04], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Miercoles": {"l": [47.2, 44.28, 43.89, 45.18, 45.98, 51.79, 61.18, 74.14, 77.56, 74.85, 73.53, 74.56, 75.94, 75.68, 76.65, 76.38, 73.13, 67.99, 64.89, 63.18, 61.26, 60.42, 54.68, 50.94], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Jueves": {"l": [47.43, 44.31, 43.99, 45.04, 46.26, 53.47, 60.99, 73.66, 80.68, 83.7, 75.29, 84.83, 82.62, 77.34, 79.08, 77.75, 82.6, 81.2, 69.28, 66.49, 63.99, 62.0, 56.44, 50.86], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Viernes": {"l": [47.57, 46.43, 45.83, 47.53, 49.33, 53.51, 67.37, 76.19, 78.48, 78.69, 73.51, 71.81, 74.39, 72.82, 77.88, 75.45, 74.77, 73.99, 71.16, 63.54, 62.27, 61.32, 54.14, 51.38], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Sabado": {"l": [47.31, 44.86, 44.65, 45.53, 47.26, 52.66, 61.44, 70.83, 74.06, 74.09, 72.6, 72.28, 68.9, 69.59, 69.95, 70.44, 72.12, 72.35, 68.43, 63.71, 61.19, 60.4, 55.57, 51.62], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Domingo": {"l": [48.6, 44.64, 44.25, 45.16, 47.29, 50.04, 53.42, 57.66, 63.41, 72.43, 73.75, 74.43, 74.75, 72.22, 70.51, 66.28, 64.94, 63.16, 59.2, 60.15, 62.49, 60.08, 56.72, 54.45], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Festivo": {"l": [53.67, 47.3, 45.56, 47.56, 48.74, 55.77, 59.99, 63.61, 69.6, 76.78, 71.94, 72.87, 74.94, 74.43, 71.84, 74.02, 71.86, 73.32, 58.9, 59.21, 58.34, 58.51, 57.97, 52.35], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}}, "Frt46389": {"Lunes": {"l": [210.45, 198.71, 199.79, 204.86, 211.85, 226.49, 261.31, 278.62, 292.29, 315.49, 320.71, 325.5, 330.82, 332.54, 316.04, 312.53, 313.76, 303.45, 297.8, 288.55, 294.1, 289.17, 263.55, 250.28], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Martes": {"l": [229.05, 216.17, 225.43, 212.48, 230.71, 234.1, 267.11, 295.4, 323.58, 337.05, 339.27, 337.21, 349.12, 349.28, 321.48, 357.47, 352.28, 352.62, 330.97, 313.83, 301.74, 288.63, 277.84, 265.95], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Miercoles": {"l": [250.56, 232.39, 234.96, 216.2, 227.16, 240.8, 281.43, 307.18, 323.62, 331.82, 352.86, 381.92, 367.94, 387.2, 388.67, 351.33, 369.27, 360.06, 345.8, 327.7, 316.66, 298.53, 273.94, 257.54], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Jueves": {"l": [245.19, 233.77, 228.03, 226.17, 231.36, 249.53, 309.14, 349.03, 370.16, 395.37, 395.75, 401.66, 400.78, 394.24, 398.51, 398.14, 396.88, 388.08, 369.6, 355.14, 321.37, 299.22, 283.8, 269.29], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Viernes": {"l": [260.42, 248.38, 233.34, 233.23, 238.0, 261.06, 300.47, 340.7, 371.59, 396.13, 392.98, 373.89, 404.67, 378.66, 399.77, 390.85, 386.32, 379.91, 344.52, 319.08, 307.17, 317.68, 285.68, 272.57], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Sabado": {"l": [259.3, 235.59, 226.09, 229.49, 233.75, 247.63, 257.34, 279.64, 316.34, 337.75, 349.17, 376.35, 355.71, 329.82, 323.59, 321.0, 325.13, 306.61, 302.98, 293.65, 278.62, 278.28, 274.33, 262.77], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Domingo": {"l": [244.55, 221.26, 204.98, 205.65, 209.89, 232.16, 255.35, 270.96, 268.08, 311.82, 336.25, 334.25, 337.19, 350.96, 332.8, 322.34, 305.59, 279.08, 277.12, 270.54, 266.13, 256.08, 243.79, 222.05], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Festivo": {"l": [246.28, 236.33, 241.41, 233.99, 233.68, 267.23, 281.89, 284.24, 299.2, 320.03, 336.75, 349.36, 344.67, 340.56, 327.95, 307.67, 306.21, 305.0, 254.59, 234.83, 241.92, 231.12, 228.11, 221.91], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}}, "Frt47626": {"Lunes": {"l": [107.36, 99.46, 102.18, 110.13, 106.35, 107.83, 113.53, 131.38, 141.66, 135.81, 147.1, 140.58, 149.5, 146.05, 147.95, 152.81, 151.85, 148.23, 148.58, 151.55, 140.74, 129.73, 130.58, 116.1], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Martes": {"l": [110.81, 106.41, 106.16, 106.05, 108.62, 111.15, 114.91, 125.81, 135.84, 141.48, 137.71, 126.45, 127.82, 126.89, 126.16, 125.26, 135.47, 152.19, 163.02, 161.51, 158.31, 146.03, 143.12, 134.32], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Miercoles": {"l": [113.42, 111.08, 111.84, 114.19, 114.92, 119.35, 125.03, 140.73, 144.63, 159.12, 150.25, 159.89, 151.06, 160.27, 155.3, 155.2, 153.39, 166.79, 165.88, 157.93, 153.76, 141.1, 135.41, 130.07], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Jueves": {"l": [116.64, 109.85, 110.42, 110.22, 113.63, 120.0, 128.79, 151.2, 154.75, 157.02, 166.89, 154.41, 158.08, 154.15, 155.01, 157.47, 162.17, 149.44, 141.67, 141.1, 139.4, 135.55, 131.44, 126.69], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Viernes": {"l": [123.9, 119.26, 118.78, 120.04, 122.32, 132.98, 137.43, 158.81, 164.9, 170.81, 171.22, 167.55, 159.94, 166.51, 160.75, 145.96, 0.0, 0.0, 145.78, 0.0, 0.0, 0.0, 126.41, 123.63], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Sabado": {"l": [127.93, 122.1, 120.0, 121.76, 122.11, 124.05, 127.72, 135.19, 146.39, 156.14, 158.16, 151.69, 152.01, 150.18, 153.77, 147.26, 147.04, 144.4, 145.0, 143.9, 139.44, 133.12, 130.7, 128.03], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Domingo": {"l": [116.02, 113.62, 112.72, 111.87, 115.23, 116.55, 118.08, 123.09, 124.08, 129.46, 146.36, 146.64, 143.86, 130.95, 132.6, 125.6, 116.27, 118.73, 126.58, 126.85, 128.95, 128.61, 124.34, 116.01], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Festivo": {"l": [118.31, 109.08, 113.36, 115.25, 111.65, 114.26, 115.16, 116.97, 132.51, 134.22, 141.7, 152.55, 145.89, 151.72, 142.23, 141.95, 156.26, 146.63, 144.63, 146.47, 148.65, 140.34, 132.8, 126.66], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}}, "Frt47750": {"Lunes": {"l": [135.85, 136.05, 133.57, 136.07, 134.15, 139.23, 146.1, 152.04, 163.6, 190.43, 188.72, 190.97, 190.09, 176.33, 173.86, 0.0, 177.72, 187.94, 183.66, 176.64, 163.22, 160.15, 154.26, 146.79], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Martes": {"l": [148.05, 146.67, 141.47, 142.25, 151.93, 151.2, 162.05, 162.97, 180.14, 195.78, 193.67, 205.48, 207.08, 215.33, 220.77, 225.23, 222.2, 211.78, 0.0, 159.55, 164.75, 154.95, 151.81, 143.88], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Miercoles": {"l": [140.26, 138.53, 142.18, 133.53, 137.09, 147.99, 159.18, 166.59, 168.11, 191.55, 208.4, 203.81, 204.94, 204.23, 205.94, 210.07, 189.85, 191.82, 196.73, 180.43, 173.02, 172.55, 158.72, 147.82], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Jueves": {"l": [148.56, 144.82, 142.58, 142.7, 133.55, 142.4, 157.96, 186.78, 204.01, 211.63, 213.99, 209.36, 218.31, 213.85, 214.32, 196.21, 216.82, 212.78, 210.3, 192.65, 186.86, 176.56, 163.18, 165.09], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Viernes": {"l": [157.16, 153.53, 150.75, 151.49, 150.21, 158.42, 174.25, 176.94, 184.6, 194.74, 204.32, 205.17, 200.28, 205.68, 204.72, 212.73, 210.0, 207.26, 195.63, 182.39, 177.7, 171.24, 166.41, 158.0], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Sabado": {"l": [150.52, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 152.19, 199.47, 197.11, 203.13, 207.18, 0.0, 0.0, 0.0, 0.0, 192.03, 191.37, 185.4, 180.28, 173.94, 167.79, 151.87, 144.99], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Domingo": {"l": [144.04, 143.67, 141.78, 151.46, 150.71, 151.93, 159.04, 159.85, 168.28, 175.43, 181.49, 189.12, 194.38, 187.56, 193.34, 191.22, 186.44, 185.91, 183.71, 175.63, 162.42, 159.53, 155.65, 144.17], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Festivo": {"l": [136.14, 134.45, 130.36, 130.46, 130.9, 134.46, 141.02, 155.02, 173.58, 166.52, 165.21, 183.9, 0.0, 0.0, 0.0, 0.0, 187.37, 184.1, 171.96, 162.83, 151.11, 152.23, 115.75, 0.0], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}}, "Frt50183": {"Lunes": {"l": [599.84, 593.79, 577.2, 561.46, 564.26, 571.86, 591.68, 598.51, 632.73, 618.84, 658.61, 691.25, 687.07, 678.07, 711.57, 717.39, 717.55, 737.19, 715.93, 711.63, 703.18, 675.3, 639.67, 609.18], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Martes": {"l": [599.3, 590.11, 584.94, 582.55, 0.0, 0.0, 0.0, 0.0, 0.0, 657.12, 715.88, 749.72, 742.74, 782.82, 815.17, 798.83, 808.33, 778.63, 777.09, 731.89, 715.1, 712.96, 681.57, 664.65], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Miercoles": {"l": [633.22, 0.0, 537.02, 599.85, 641.05, 673.5, 685.91, 744.91, 723.82, 761.4, 787.25, 789.01, 785.38, 807.45, 747.74, 719.1, 779.98, 799.63, 801.42, 771.77, 721.1, 683.36, 663.57, 637.32], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Jueves": {"l": [628.28, 621.63, 606.75, 611.94, 660.97, 657.6, 689.32, 761.27, 753.12, 752.15, 780.03, 796.01, 807.6, 794.19, 795.06, 788.21, 814.81, 804.47, 812.49, 788.56, 753.31, 735.6, 694.36, 674.66], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Viernes": {"l": [663.68, 646.33, 638.74, 635.38, 663.42, 694.03, 746.41, 785.02, 807.14, 803.11, 782.68, 755.99, 780.91, 774.71, 746.09, 752.37, 754.85, 764.65, 751.0, 745.71, 723.06, 651.22, 652.18, 639.25], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Sabado": {"l": [629.18, 604.28, 598.73, 609.26, 610.81, 614.53, 598.9, 639.27, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 661.45, 682.27, 689.78, 686.13, 683.45, 704.91, 642.65, 616.37, 604.07], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Domingo": {"l": [602.02, 591.52, 566.01, 582.28, 578.21, 586.28, 587.49, 593.94, 618.83, 622.15, 638.98, 638.74, 631.12, 681.99, 680.25, 684.85, 699.17, 706.18, 713.2, 674.05, 657.98, 638.73, 628.67, 617.01], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Festivo": {"l": [630.37, 623.04, 620.03, 631.4, 644.97, 650.76, 660.51, 638.66, 709.5, 718.67, 725.93, 706.86, 676.13, 682.51, 651.8, 686.55, 650.96, 685.81, 690.21, 643.88, 625.85, 648.71, 635.65, 585.61], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}}, "Frt50674": {"Lunes": {"l": [57.43, 56.44, 52.02, 55.51, 56.73, 64.23, 72.81, 75.62, 75.3, 78.42, 71.85, 75.58, 74.63, 71.85, 68.63, 71.7, 72.75, 71.49, 73.35, 72.55, 70.71, 68.75, 65.72, 59.85], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Martes": {"l": [56.66, 56.07, 54.83, 56.07, 57.22, 63.58, 69.57, 75.17, 81.98, 77.24, 76.0, 73.62, 73.98, 74.16, 73.51, 69.68, 73.03, 74.97, 71.12, 73.23, 72.11, 70.79, 67.18, 60.03], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Miercoles": {"l": [57.41, 57.73, 56.02, 56.95, 58.44, 63.95, 72.48, 76.75, 75.63, 79.71, 77.59, 74.79, 71.77, 73.9, 72.25, 70.8, 75.34, 79.0, 72.36, 70.42, 69.3, 66.82, 63.1, 62.07], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Jueves": {"l": [58.74, 56.1, 55.59, 56.8, 54.86, 64.1, 71.64, 86.52, 80.86, 79.0, 82.97, 82.3, 76.98, 76.69, 74.65, 72.66, 73.12, 73.91, 72.33, 70.93, 69.21, 70.85, 63.95, 58.78], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Viernes": {"l": [57.85, 58.01, 56.15, 56.73, 59.91, 65.27, 69.85, 80.32, 81.83, 80.74, 78.5, 78.9, 74.34, 74.34, 77.94, 75.95, 75.3, 76.81, 71.05, 68.71, 65.69, 64.48, 62.27, 57.03], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Sabado": {"l": [53.65, 53.0, 51.54, 54.24, 58.86, 59.14, 68.05, 74.19, 73.9, 76.89, 78.56, 72.96, 71.92, 68.14, 70.65, 72.48, 67.08, 67.79, 68.29, 72.1, 68.0, 66.27, 63.62, 54.85], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Domingo": {"l": [55.56, 58.58, 53.31, 56.94, 56.62, 62.02, 65.48, 69.56, 74.58, 74.99, 72.06, 74.21, 71.44, 69.59, 67.42, 65.97, 71.08, 71.62, 69.45, 65.23, 65.74, 61.91, 62.85, 59.14], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Festivo": {"l": [59.32, 57.95, 56.94, 59.11, 58.51, 61.63, 67.09, 66.67, 69.71, 71.76, 70.05, 66.99, 65.07, 68.72, 68.17, 67.46, 67.87, 69.2, 67.99, 67.08, 63.74, 62.67, 60.65, 58.47], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}}, "Frt50676": {"Lunes": {"l": [50.91, 50.79, 46.4, 50.43, 53.48, 59.09, 61.55, 69.72, 79.26, 86.85, 81.88, 82.78, 80.78, 83.13, 76.7, 77.0, 78.35, 84.04, 83.06, 85.18, 80.18, 71.4, 63.01, 0.0], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Martes": {"l": [42.35, 40.98, 40.68, 41.93, 43.71, 56.38, 66.89, 72.69, 79.63, 86.35, 82.15, 76.65, 81.51, 75.12, 79.24, 81.08, 0.0, 0.0, 0.0, 0.0, 84.89, 73.1, 62.9, 55.06], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Miercoles": {"l": [51.5, 50.76, 48.29, 47.14, 51.27, 60.26, 68.74, 79.76, 90.62, 91.36, 90.09, 86.47, 82.59, 84.41, 87.1, 85.41, 83.78, 88.28, 91.12, 90.23, 92.17, 78.55, 63.27, 49.63], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Jueves": {"l": [48.95, 48.82, 48.03, 46.47, 50.42, 57.56, 66.04, 72.58, 87.21, 88.57, 91.85, 94.07, 93.81, 91.03, 91.65, 92.55, 92.9, 93.57, 94.43, 94.49, 93.18, 85.6, 0.0, 0.0], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Viernes": {"l": [0.0, 0.0, 44.58, 43.33, 48.74, 57.98, 65.05, 72.3, 88.34, 95.87, 90.88, 92.57, 93.68, 92.68, 94.26, 93.99, 93.04, 96.3, 106.39, 114.3, 109.03, 106.55, 84.13, 58.7], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Sabado": {"l": [54.43, 52.11, 51.08, 49.42, 53.23, 64.49, 65.44, 69.48, 97.7, 101.11, 101.2, 98.16, 96.21, 111.11, 110.73, 109.87, 110.22, 116.28, 123.9, 130.63, 124.08, 112.44, 91.34, 70.75], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Domingo": {"l": [58.06, 0.0, 51.62, 53.11, 55.15, 73.97, 71.22, 71.92, 98.01, 104.87, 101.65, 98.61, 97.05, 94.32, 95.46, 94.37, 89.21, 89.02, 96.15, 92.54, 90.3, 79.58, 70.59, 54.8], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Festivo": {"l": [53.15, 51.51, 50.16, 48.94, 52.37, 60.41, 70.39, 73.07, 88.98, 102.12, 97.07, 95.0, 97.47, 97.05, 99.62, 93.59, 93.52, 90.14, 90.43, 92.14, 89.04, 79.39, 68.76, 58.6], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}}, "Frt51262": {"Lunes": {"l": [289.67, 288.24, 307.9, 286.51, 283.43, 275.07, 263.9, 280.43, 288.27, 289.27, 291.63, 291.96, 283.37, 291.73, 305.23, 301.66, 309.21, 305.82, 308.11, 304.23, 296.27, 292.12, 302.62, 300.6], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Martes": {"l": [303.49, 300.61, 294.19, 292.4, 279.72, 276.39, 279.18, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 285.53, 271.22, 298.16, 296.75, 295.93, 297.92, 297.56, 294.67, 301.91], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Miercoles": {"l": [296.77, 293.9, 271.25, 235.97, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 272.41, 0.0, 0.0, 0.0, 298.78, 293.27, 294.07], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Jueves": {"l": [295.76, 292.09, 292.24, 283.21, 263.36, 263.26, 277.01, 289.93, 301.02, 310.75, 308.91, 329.66, 332.82, 326.66, 326.49, 339.52, 337.86, 343.24, 356.49, 360.31, 351.59, 348.58, 320.13, 301.15], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Viernes": {"l": [301.95, 298.95, 298.29, 298.24, 286.5, 277.83, 284.66, 291.95, 315.03, 327.85, 331.67, 340.79, 346.13, 383.65, 389.46, 387.32, 412.21, 414.4, 412.0, 417.42, 389.5, 400.21, 382.58, 336.71], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Sabado": {"l": [0.0, 303.91, 299.72, 294.67, 298.8, 291.87, 295.6, 304.39, 315.02, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 317.9, 355.52, 349.33, 346.17, 374.41], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Domingo": {"l": [342.05, 330.78, 322.68, 322.11, 317.43, 308.21, 297.4, 314.14, 324.98, 333.39, 336.7, 345.06, 345.66, 346.73, 363.07, 376.07, 371.53, 380.62, 386.43, 0.0, 0.0, 0.0, 0.0, 303.3], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Festivo": {"l": [321.86, 314.75, 314.8, 327.23, 328.62, 307.83, 297.7, 306.28, 339.63, 337.19, 357.95, 310.67, 307.81, 306.97, 306.31, 296.77, 304.38, 308.59, 322.6, 321.24, 308.88, 351.62, 335.33, 347.38], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}}, "Frt51273": {"Lunes": {"l": [69.16, 67.39, 66.54, 67.64, 66.24, 66.82, 74.19, 79.13, 87.38, 91.39, 102.19, 113.81, 123.87, 128.13, 123.97, 122.66, 120.15, 122.73, 127.27, 124.91, 119.52, 108.19, 97.95, 83.27], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Martes": {"l": [73.44, 69.93, 69.24, 67.09, 66.4, 69.77, 76.47, 89.44, 99.17, 107.0, 121.32, 121.65, 125.81, 0.0, 0.0, 122.39, 119.09, 132.22, 136.65, 131.94, 135.99, 117.64, 105.18, 85.74], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Miercoles": {"l": [75.93, 73.44, 72.25, 71.71, 71.74, 76.42, 79.67, 83.27, 94.82, 110.44, 115.81, 121.78, 121.35, 113.75, 127.49, 130.18, 122.14, 123.95, 126.75, 125.44, 125.72, 117.46, 106.33, 91.08], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Jueves": {"l": [80.15, 79.58, 75.36, 74.11, 73.77, 75.48, 80.59, 90.74, 97.62, 106.34, 110.05, 117.1, 123.97, 127.06, 131.42, 124.14, 124.86, 130.6, 132.04, 130.94, 130.85, 123.0, 115.2, 101.85], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Viernes": {"l": [87.72, 83.96, 82.03, 80.92, 86.75, 85.57, 88.87, 99.81, 108.37, 115.83, 125.36, 128.1, 129.44, 136.01, 132.98, 131.12, 0.0, 128.18, 131.41, 135.4, 129.82, 118.59, 114.73, 100.15], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Sabado": {"l": [89.04, 82.94, 79.76, 77.86, 83.15, 83.22, 91.27, 112.11, 123.59, 130.77, 133.5, 137.94, 142.18, 141.33, 141.98, 145.43, 140.21, 136.21, 142.71, 136.48, 130.77, 123.58, 115.43, 102.86], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Domingo": {"l": [85.68, 85.24, 82.37, 83.83, 83.82, 87.36, 90.6, 97.8, 113.58, 117.33, 122.27, 133.33, 128.59, 126.94, 127.08, 121.44, 118.51, 116.26, 113.41, 107.13, 101.26, 91.71, 84.64, 73.1], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Festivo": {"l": [100.08, 93.63, 89.41, 78.13, 81.09, 90.57, 93.04, 99.15, 106.81, 111.64, 112.39, 119.35, 116.11, 117.43, 114.37, 111.56, 107.49, 102.26, 104.6, 102.69, 102.45, 0.0, 0.0, 0.0], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}}, "Frt54944": {"Lunes": {"l": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 53.81, 63.53, 79.12, 83.58, 87.56, 96.23, 90.85, 91.28, 91.77, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Martes": {"l": [0.0, 0.0, 0.0, 0.0, 44.94, 0.0, 45.83, 57.8, 65.51, 72.11, 74.46, 79.27, 84.3, 88.19, 94.47, 87.91, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Miercoles": {"l": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 57.62, 71.3, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Jueves": {"l": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 101.05, 104.04, 0.0, 119.75, 0.0, 0.0, 0.0, 106.48, 103.54, 100.76, 0.0, 88.59, 0.0], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Viernes": {"l": [0.0, 0.0, 69.17, 67.58, 66.67, 63.51, 0.0, 81.63, 97.36, 105.78, 111.86, 123.94, 126.4, 134.96, 142.64, 132.95, 119.39, 109.26, 102.84, 98.67, 94.13, 90.76, 86.96, 79.15], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Sabado": {"l": [78.04, 75.35, 74.34, 72.19, 68.54, 64.95, 68.26, 77.64, 83.41, 92.2, 104.32, 113.93, 122.16, 120.89, 118.06, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 86.99, 0.0, 0.0], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Domingo": {"l": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 101.57, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Festivo": {"l": [86.39, 84.07, 81.93, 79.15, 78.99, 77.27, 78.41, 82.04, 86.86, 100.6, 116.19, 123.47, 119.3, 118.02, 120.33, 107.61, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}}, "Frt69572": {"Lunes": {"l": [0.0, 0.0, 55.3, 56.56, 63.19, 80.13, 78.66, 83.73, 96.33, 90.95, 97.05, 92.12, 97.12, 0.0, 0.0, 85.27, 0.0, 72.79, 74.79, 79.33, 85.7, 82.1, 68.75, 52.5], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Martes": {"l": [52.09, 53.15, 53.37, 53.65, 63.23, 78.17, 76.37, 77.29, 82.17, 86.64, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 76.57, 71.56, 63.56, 60.08], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Miercoles": {"l": [53.1, 53.53, 54.26, 54.21, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Jueves": {"l": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Viernes": {"l": [56.01, 53.18, 58.25, 54.56, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 77.16, 72.62, 59.96], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Sabado": {"l": [55.89, 59.9, 58.28, 59.94, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 82.41, 79.55, 68.74, 55.77], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Domingo": {"l": [49.45, 52.51, 52.5, 53.57, 58.97, 75.2, 75.02, 92.59, 98.38, 100.5, 91.27, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "Festivo": {"l": [57.06, 54.95, 55.43, 54.02, 66.6, 72.46, 72.89, 80.37, 79.69, 89.81, 87.08, 83.21, 78.17, 81.08, 79.16, 82.97, 81.17, 72.76, 74.1, 82.81, 80.92, 80.94, 69.57, 59.17], "e": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}}};
+let DATA=PLANTS.Port;const LBCD={"Port": 70211, "Frt32697": 11440, "Frt32731": 4008, "Frt33210": 1763, "Frt46389": 7854, "Frt47626": 3424, "Frt47750": 4462, "Frt50183": 18992, "Frt50674": 1720, "Frt50676": 2312, "Frt51262": 7761, "Frt51273": 3314, "Frt54944": 3161, "Frt69572": 0};let CUR='Port';
+const PMAX={max:8000,step:2000};
+let LBCAVG=0;
+const DAYS=[['Lunes','Lunes'],['Martes','Martes'],['Miercoles','Miércoles'],['Jueves','Jueves'],['Viernes','Viernes'],['Sabado','Sábado'],['Domingo','Domingo']];
+const MARGIN=0.06, GMF=0.004, TOL=5, GRACE_END='2027-05'; // primeros 6 meses: nov. 2026 a abr. 2027
+/* Festivos Colombia 2026 y 2027 (calendarios oficiales con ley Emiliani) */
+const HOLS=new Set(['2026-11-02','2026-11-16','2026-12-08','2026-12-25',
+ '2027-01-01','2027-01-11','2027-03-22','2027-03-25','2027-03-26','2027-05-01','2027-05-10','2027-05-31','2027-06-07','2027-07-05','2027-07-20','2027-08-07','2027-08-16','2027-10-18','2027-11-01','2027-11-15','2027-12-08','2027-12-25']);
+const MN=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+const MONTHS=[];for(let y=2026;y<=2027;y++)for(let m=1;m<=12;m++){if(y===2026&&m<11)continue;MONTHS.push([y+'-'+String(m).padStart(2,'0'),MN[m-1]+' '+y])}
+const TYPES=DAYS.concat([['Festivo','Festivo']]);
+const WN=['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'];
+const WKEY=['Lunes','Martes','Miercoles','Jueves','Viernes','Sabado','Domingo'];
+const S={day:'Viernes',sel:new Set([18,19,20]),mode:'pct',pct:60,dev:0,grace:true,kwh:2000,price:861,month:'2026-11',dates:new Set()};
+const $=id=>document.getElementById(id);
+const nf=new Intl.NumberFormat('es-CO',{maximumFractionDigits:0});
+const pesos=v=>(v<0?'−':'')+'$'+nf.format(Math.abs(Math.round(v)));
+const M=v=>'$'+(v/1e6).toLocaleString('es-CO',{minimumFractionDigits:1,maximumFractionDigits:1})+' M';
+const hlabel=h=>{h=h%24;const s=h<12?'a. m.':'p. m.';const x=h%12===0?12:h%12;return x+' '+s};
+const dayName=k=>(TYPES.find(d=>d[0]===k)||[k,k])[1];
+const monthName=ym=>MONTHS.find(m=>m[0]===ym)[1];
+function num(el,d){const v=parseFloat(el.value);return isFinite(v)&&v>=0?v:d}
+
+function monthDays(ym){
+  const [y,m]=ym.split('-').map(Number),n=new Date(y,m,0).getDate(),out=[];
+  for(let d=1;d<=n;d++){
+    const ds=ym+'-'+String(d).padStart(2,'0'),w=(new Date(y,m-1,d).getDay()+6)%7; // 0 = lunes
+    out.push({ds,d,w,type:HOLS.has(ds)&&w!==6?'Festivo':WKEY[w]});
+  }
+  return out;
+}
+const typeOf=ds=>{const ym=ds.slice(0,7);return monthDays(ym).find(x=>x.ds===ds).type};
+
+function calc(day,sel){
+  const d=DATA[day],red=[];let E=0,penalty=0;
+  for(let i=0;i<24;i++){
+    const r=sel.has(i)?(S.mode==='pct'?d.l[i]*S.pct/100:Math.min(S.kwh,d.l[i])):0;
+    red.push(r);E+=r;
+    const fail=Math.min(S.dev,r);
+    if(fail>r*TOL/100)penalty+=0.30*S.price*fail;
+  }
+  const gross=E*S.price;
+  return {red,E,gross,penalty,margin:gross*MARGIN,gmf:gross*GMF,net:gross*(1-MARGIN-GMF)};
+}
+
+const inGrace=ym=>S.grace&&ym<GRACE_END;
+const pen=(c,ym)=>inGrace(ym)?0:c.penalty;
+const netIn=(c,ym)=>c.net-pen(c,ym);
+function windowText(){
+  const hs=[...S.sel].sort((a,b)=>a-b);if(!hs.length)return 'No hay horas elegidas.';
+  const rs=[];let a=hs[0],p=a;
+  for(let k=1;k<=hs.length;k++){const h=hs[k];if(h!==p+1){rs.push([a,p+1]);a=h}p=h}
+  return rs.map(r=>hlabel(r[0])+' a '+(r[1]===24?'12 a. m.':hlabel(r[1]))).join(' · ');
+}
+
+function drawChart(c){
+  const d=DATA[S.day],W=720,L=52,T=10,B=26,PH=290-T-B,PW=W-L-6,slot=PW/24,bw=slot*0.74,MAXV=PMAX.max;
+  const y=v=>T+(1-v/MAXV)*PH;
+  let s='';
+  for(let v=0;v<=MAXV;v+=PMAX.step){
+    s+=`<line x1="${L}" x2="${W-6}" y1="${y(v)}" y2="${y(v)}" stroke="var(--line)" stroke-width="${v===0?1.5:1}"/>`;
+    s+=`<text x="${L-8}" y="${y(v)+4}" text-anchor="end">${nf.format(v)}</text>`;
+  }
+  for(let i=0;i<24;i++){
+    const x=L+i*slot+(slot-bw)/2,base=d.l[i],sel=S.sel.has(i),r=c.red[i];
+    if(sel){
+      const after=base-r;
+      s+=`<rect x="${x}" y="${y(after)}" width="${bw}" height="${y(0)-y(after)}" fill="var(--bar-after)" rx="2"/>`;
+      if(r>0)s+=`<rect x="${x}" y="${y(base)}" width="${bw}" height="${Math.max(1,y(after)-y(base)-1)}" fill="var(--orange)" rx="2"/>`;
+    }else{
+      s+=`<rect x="${x}" y="${y(base)}" width="${bw}" height="${y(0)-y(base)}" fill="var(--bar)" rx="2"/>`;
+    }
+    if(i%3===0)s+=`<text x="${x+bw/2}" y="${290-8}" text-anchor="middle">${i}</text>`;
+    s+=`<g class="col" data-i="${i}" tabindex="0" role="button" aria-pressed="${sel}" aria-label="${i}:00 a ${i+1}:00, línea base ${nf.format(base)} kWh, ${sel?'incluida':'no incluida'}">`+
+       `<rect class="focusring" x="${L+i*slot}" y="${T}" width="${slot}" height="${PH}" rx="3"/>`+
+       `<rect class="hit" x="${L+i*slot}" y="${T}" width="${slot}" height="${PH+B}"/></g>`;
+  }
+  $('chart').innerHTML=s;
+  const lbT=DATA[S.day].l.reduce((a,b)=>a+b,0);$('lbDay').textContent=nf.format(lbT)+' kWh';$('lbRed').textContent=nf.format(c.E)+' kWh';$('lbPct').textContent=lbT>0?'= '+(c.E/lbT*100).toFixed(1).replace('.',',')+' % de la LBC diaria':'';
+  $('chartTitle').textContent='Línea base del '+dayName(S.day).toLowerCase()+', hora a hora';
+  $('winText').textContent=(S.day==='Festivo'?'Festivo: línea base de los festivos de lunes a sábado (los domingos festivos usan la del domingo). ':'')+(S.sel.size?'Ventana elegida: '+windowText()+'. ':'')+'El eje horizontal marca la hora de inicio (0 es medianoche).';
+}
+
+function drawCal(){
+  const [y,m]=S.month.split('-').map(Number),days=monthDays(S.month),lead=(new Date(y,m-1,1).getDay()+6)%7;
+  let h=['Lu','Ma','Mi','Ju','Vi','Sa','Do'].map((n,i)=>`<button type="button" class="wd" data-w="${i}" aria-label="Elegir o quitar todos los ${WN[i].toLowerCase()} del mes">${n}</button>`).join('');
+  for(let i=0;i<lead;i++)h+='<span></span>';
+  days.forEach(x=>{
+    h+=`<button type="button" class="day${x.type==='Festivo'?' fest':''}" data-ds="${x.ds}" aria-pressed="${S.dates.has(x.ds)}" aria-label="${WN[x.w]} ${x.d}${x.type==='Festivo'?', festivo':''}"><b>${x.d}</b></button>`;
+  });
+  $('cal').innerHTML=h;
+  const i=MONTHS.findIndex(mm=>mm[0]===S.month);
+  $('prev').disabled=i===0;$('next').disabled=i===MONTHS.length-1;
+}
+
+function lbcWarn(){const n=dayName(S.day).toLowerCase(),s=DATA[S.day].l.reduce((a,b)=>a+b,0),z=DATA[S.day].l.filter(v=>v<=0).length,w=$('lbcWarn'),m=[];if(s<=0)m.push('LBC horaria del '+n+': margen de error > 20 %, sin valor calculado.');else if(z>0)m.push('LBC horaria del '+n+': margen de error > 20 % en '+z+' de las 24 horas.');if(LBCD[CUR]<=0)m.push('LBC diaria (DDV): margen de error > 20 %, sin valor calculado para esta frontera.');w.hidden=!m.length;w.textContent=m.join(' ')}
+function render(focusDs){lbcWarn();
+  const per={};TYPES.forEach(t=>per[t[0]]=calc(t[0],S.sel));
+  const days=monthDays(S.month),cnt={},avail={};
+  TYPES.forEach(t=>{cnt[t[0]]=0;avail[t[0]]=0});
+  days.forEach(x=>{avail[x.type]++;if(S.dates.has(x.ds))cnt[x.type]++});
+  let tE=0,tG=0,tMg=0,tF=0,tN=0,tDays=0,tP=0,tPr=0;
+  TYPES.forEach(t=>{const k=t[0],n=cnt[k],c=per[k];tE+=c.E*n;tG+=c.gross*n;tMg+=c.margin*n;tF+=c.gmf*n;tP+=pen(c,S.month)*n;tPr+=c.penalty*n;tN+=netIn(c,S.month)*n;tDays+=n});
+  const c=per[S.day];
+  $('heroLbl').textContent='Total de '+monthName(S.month).toLowerCase()+', después de margen y GMF';
+  $('netMonth').textContent=M(tN);
+  $('netDay').textContent=tDays===1?'1 día elegido en el calendario.':tDays+' días elegidos en el calendario.';
+  $('kE').textContent=nf.format(tE);$('kD').textContent=tDays;$('kH').textContent=S.sel.size;
+  $('kK').textContent=tE>0?pesos(tN/tE):'—';
+  $('thDay').textContent=tDays>0?(tDays===1?'Un día elegido':'Promedio por día elegido'):'Un '+dayName(S.day).toLowerCase();
+  const A=tDays>0?{E:tE/tDays,gross:tG/tDays,margin:tMg/tDays,gmf:tF/tDays,pen:tP/tDays,net:tN/tDays}:{E:c.E,gross:c.gross,margin:c.margin,gmf:c.gmf,pen:pen(c,S.month),net:netIn(c,S.month)};
+  const set=(a,b,v,vm)=>{$(a).textContent=pesos(v);$(b).textContent=pesos(vm)};
+  set('gD','gM',A.gross,tG);set('mD','mM',-A.margin,-tMg);set('fD','fM',-A.gmf,-tF);set('pnD','pnM',-A.pen,-tP);set('nD','nM',A.net,tN);
+  $('kED').textContent=nf.format(A.E)+' kWh/día';
+  $('kEH').textContent=S.sel.size?nf.format(A.E/S.sel.size)+' kWh/h promedio':'Elija horas';
+  $('kEDl').textContent=tDays>0?'energía a reducir por día':'elija días en el calendario';
+  $('kP').textContent=pesos(tP);
+  $('kPl').textContent='penalidad del mes';
+  const grace=inGrace(S.month);
+  $('pnLbl').textContent='Penalidad por desviación · 30 %'+(grace&&tPr>0?' (no se cobra: primeros 6 meses)':'');
+  $('penOut').innerHTML='<span class="pen-val">Penalidad total del mes: '+pesos(tPr)+'</span><span class="pen-val2">Promedio diario: '+(tDays>0?pesos(tPr/tDays):'$0')+'</span><span class="pen-sub">'+
+    (S.dev<=0?'La desviación es 0: no hay penalidad.':tPr<=0?'Dentro del rango de 5 %: sin penalidad.':
+     (grace?'No se descuenta porque son los primeros 6 meses (hasta abril de 2027). Desmarque la casilla para simular el descuento.':'Es lo que se cobraría este mes.'))+'</span>';
+  drawChart(c);drawCal();
+  if(focusDs){const b=$('cal').querySelector(`[data-ds="${focusDs}"]`);if(b)b.focus()}
+  // por tipo de día
+  $('part').innerHTML=TYPES.map(t=>{const k=t[0];
+    return `<tr><td>${t[1]}</td><td>${cnt[k]} de ${avail[k]}</td><td>${nf.format(per[k].E)}</td><td>${pesos(netIn(per[k],S.month))}</td><td>${pesos(netIn(per[k],S.month)*cnt[k])}</td></tr>`}).join('');
+  $('pTotDays').textContent=tDays;$('pTot').textContent=pesos(tN);
+  // resumen por mes
+  const byM={};
+  [...S.dates].forEach(ds=>{const t=typeOf(ds);const ym=ds.slice(0,7);(byM[ym]=byM[ym]||{n:0,net:0});byM[ym].n++;byM[ym].net+=netIn(per[t],ym)});
+  let gn=0,gd=0;
+  const rows=MONTHS.filter(mm=>byM[mm[0]]).map(mm=>{const r=byM[mm[0]];gn+=r.net;gd+=r.n;return `<tr><td>${mm[1]}</td><td>${r.n}</td><td>${pesos(r.net)}</td></tr>`});
+  $('sumRows').innerHTML=rows.length?rows.join(''):'<tr><td colspan="3">Aún no hay días elegidos.</td></tr>';
+  $('sumDays').textContent=gd;$('sumTot').textContent=pesos(gn);
+  // detalle
+  const d=DATA[S.day],hs=[...S.sel].sort((a,b)=>a-b);
+  $('detail').innerHTML=hs.length?hs.map(i=>`<tr><td>${i}:00 – ${i+1}:00</td><td>${nf.format(d.l[i])}</td><td>${nf.format(c.red[i])}</td><td>${pesos(c.red[i]*S.price)}</td></tr>`).join('')
+    :'<tr><td colspan="4">Elija al menos una hora.</td></tr>';
+}
+
+/* calendario */
+function setMonth(ym){S.month=ym;$('month').value=ym;render()}
+function monthPreset(ym,kind){
+  monthDays(ym).forEach(x=>{S.dates.delete(x.ds);
+    if(kind==='all'||(kind==='wk'&&x.w<5))S.dates.add(x.ds)});
+}
+$('cal').addEventListener('click',e=>{
+  const b=e.target.closest('button');if(!b||b.disabled)return;
+  if(b.dataset.ds){const ds=b.dataset.ds;if(S.dates.has(ds))S.dates.delete(ds);else{S.dates.add(ds);S.day=typeOf(ds);const r=$('d-'+S.day);if(r)r.checked=true}render(ds);return}
+  if(b.dataset.w!=null){
+    const ds=monthDays(S.month).filter(x=>x.w===+b.dataset.w);
+    const all=ds.length&&ds.every(x=>S.dates.has(x.ds));
+    ds.forEach(x=>all?S.dates.delete(x.ds):S.dates.add(x.ds));render()}
+});
+$('prev').onclick=()=>{const i=MONTHS.findIndex(m=>m[0]===S.month);if(i>0)setMonth(MONTHS[i-1][0])};
+$('next').onclick=()=>{const i=MONTHS.findIndex(m=>m[0]===S.month);if(i<MONTHS.length-1)setMonth(MONTHS[i+1][0])};
+$('pWk').onclick=()=>{monthPreset(S.month,'wk');render()};
+$('pAll').onclick=()=>{monthPreset(S.month,'all');render()};
+$('pNone').onclick=()=>{monthPreset(S.month,'none');render()};
+$('pWkAll').onclick=()=>{MONTHS.forEach(m=>monthPreset(m[0],'wk'));render()};
+$('pNoneAll').onclick=()=>{S.dates=new Set();render()};
+
+/* DDV */
+const DDVM=Array.from({length:12},(_,i)=>'Mes '+(i+1));
+const lbcAvg=()=>LBCD[CUR];
+LBCAVG=lbcAvg();
+const ddvDays=DDVM.map(()=>20);
+$('ddvRows').innerHTML=DDVM.map((m,i)=>`<tr><td><b>${m}</b></td><td class="lb">${nf.format(LBCAVG)}</td><td><input class="dd" type="number" min="0" max="31" value="20" data-i="${i}" aria-label="Días de ${m}" inputmode="numeric"></td><td data-c="0"></td><td data-c="1"></td><td data-c="2"></td></tr>`).join('');
+function ddvRender(){
+  [...$('ddvRows').rows].forEach(tr=>tr.querySelector('.lb').textContent=nf.format(LBCAVG));
+  const trm=Math.max(0,+$('trm').value||0),tot=[0,0,0];
+  const pr=[0,1,2].map(k=>Math.max(0,+$('pr'+k).value||0));
+  [...$('ddvRows').rows].forEach((tr,i)=>{
+    const n=Math.min(31,Math.max(0,Math.round(+ddvDays[i]||0)));
+    [0,1,2].forEach(k=>{const g=LBCAVG*n*pr[k]*trm/1000,net=g-g*MARGIN-g*GMF;tot[k]+=net;tr.querySelector(`[data-c="${k}"]`).textContent=pesos(net)});
+  });
+  [0,1,2].forEach(k=>$('ddvT'+k).textContent=pesos(tot[k]));
+}
+$('ddvRows').addEventListener('input',e=>{const i=e.target.dataset.i;if(i!=null){ddvDays[+i]=e.target.value;ddvRender()}});
+['trm','pr0','pr1','pr2'].forEach(id=>$(id).addEventListener('input',ddvRender));
+function showTab(t){['rd','ddv'].forEach(k=>{const on=k===t;$('tab-'+k).hidden=!on;$('tabB-'+k).classList.toggle('on',on);$('tabB-'+k).setAttribute('aria-selected',on)})}
+$('tabB-rd').onclick=()=>showTab('rd');$('tabB-ddv').onclick=()=>showTab('ddv');
+ddvRender();
+const PNAMES={"Port": "Portafolio Hoteles Estelar · 13 hoteles", "Frt32697": "Intercontinental · Frt32697", "Frt32731": "Milla de Oro · Frt32731", "Frt33210": "Bogotá · Frt33210", "Frt46389": "Alto Prado · Frt46389", "Frt47626": "Square · Frt47626", "Frt47750": "Villavicencio · Frt47750", "Frt50183": "Cartagena · Frt50183", "Frt50674": "Parque 93 · Frt50674", "Frt50676": "Paipa · Frt50676", "Frt51262": "Playa Manzanillo · Frt51262", "Frt51273": "Altamira · Frt51273", "Frt54944": "Santa Marta · Frt54944", "Frt69572": "Santamar · Frt69572"};
+$('plantSeg').innerHTML='<select name="plant" id="plantSel" aria-label="Frontera">'+Object.keys(PNAMES).map(k=>`<option value="${k}">${PNAMES[k]}</option>`).join('')+'</select>';
+function setPlant(k){
+  CUR=k;DATA=PLANTS[k];
+  const mx=Math.max(...Object.values(DATA).flatMap(d=>d.l));
+  PMAX.step=mx>5000?2000:mx>1000?500:100;PMAX.max=Math.ceil(mx/PMAX.step)*PMAX.step;
+  LBCAVG=lbcAvg();$('chipTxt').textContent=PNAMES[k];
+  render();ddvRender();
+}
+$('plantSeg').addEventListener('change',e=>{if(e.target.name==='plant')setPlant(e.target.value)});
+
+/* controles */
+$('daySeg').innerHTML=TYPES.map(d=>`<input type="radio" name="day" id="d-${d[0]}" value="${d[0]}" ${d[0]===S.day?'checked':''}><label for="d-${d[0]}">${d[1]}</label>`).join('');
+const opts=(from,to)=>{let s='';for(let h=from;h<=to;h++)s+=`<option value="${h}">${h===24?'12 a. m. (fin)':hlabel(h)}</option>`;return s};
+$('from').innerHTML=opts(0,23);$('to').innerHTML=opts(1,24);$('from').value=18;$('to').value=21;
+$('month').innerHTML=MONTHS.map(m=>`<option value="${m[0]}">${m[1]}</option>`).join('');$('month').value=S.month;
+$('month').addEventListener('change',e=>setMonth(e.target.value));
+$('daySeg').addEventListener('change',e=>{S.day=e.target.value;render()});
+function applyRange(){const a=+$('from').value,b=+$('to').value;S.sel=new Set();for(let h=a;h<b;h++)S.sel.add(h);render()}
+$('from').addEventListener('change',()=>{if(+$('to').value<=+$('from').value)$('to').value=Math.min(24,+$('from').value+1);applyRange()});
+$('to').addEventListener('change',()=>{if(+$('from').value>=+$('to').value)$('from').value=Math.max(0,+$('to').value-1);applyRange()});
+$('allH').onclick=()=>{S.sel=new Set([...Array(24).keys()]);$('from').value=0;$('to').value=24;render()};
+$('noneH').onclick=()=>{S.sel=new Set();render()};
+$('modeSeg').addEventListener('change',e=>{S.mode=e.target.value;$('pctBox').hidden=S.mode!=='pct';$('kwhBox').hidden=S.mode!=='kwh';render()});
+$('pctRange').addEventListener('input',e=>{S.pct=+e.target.value;$('pct').value=S.pct;render()});
+$('pct').addEventListener('input',e=>{S.pct=Math.min(100,num(e.target,0));$('pctRange').value=S.pct;render()});
+$('kwh').addEventListener('input',e=>{S.kwh=num(e.target,0);render()});
+$('price').addEventListener('input',e=>{S.price=num(e.target,0);render()});
+$('grace').addEventListener('change',e=>{S.grace=e.target.checked;render()});
+$('dev').addEventListener('input',e=>{S.dev=num(e.target,0);render()});
+
+/* gráfica: tocar, teclado y tooltip */
+const chart=$('chart'),tip=$('tip');
+function toggle(i){S.sel.has(i)?S.sel.delete(i):S.sel.add(i);render();const g=chart.querySelector(`[data-i="${i}"]`);if(g)g.focus()}
+chart.addEventListener('click',e=>{const g=e.target.closest('[data-i]');if(g)toggle(+g.dataset.i)});
+chart.addEventListener('keydown',e=>{const g=e.target.closest('[data-i]');if(g&&(e.key===' '||e.key==='Enter')){e.preventDefault();toggle(+g.dataset.i)}});
+function showTip(i){
+  const c=calc(S.day,S.sel),d=DATA[S.day],pct=(52+(i+.5)*((720-58)/24))/720*100;
+  tip.innerHTML=`<b>${i}:00 a ${i+1}:00</b>Línea base ${nf.format(d.l[i])} kWh`+
+    (S.sel.has(i)?`<br>Reduce ${nf.format(c.red[i])} kWh · ${pesos(c.red[i]*S.price)} brutos`:'<br>Hora no incluida');
+  tip.style.display='block';tip.style.left=Math.min(88,Math.max(12,pct))+'%';
+}
+chart.addEventListener('mouseover',e=>{const g=e.target.closest('[data-i]');if(g)showTip(+g.dataset.i)});
+chart.addEventListener('mouseleave',()=>{tip.style.display='none'});
+chart.addEventListener('focusin',e=>{const g=e.target.closest('[data-i]');if(g)showTip(+g.dataset.i)});
+chart.addEventListener('focusout',()=>{tip.style.display='none'});
+for(let d=3;d<=18;d++)S.dates.add('2026-11-'+String(d).padStart(2,'0'));
+setPlant('Port');
+</script>
+
+</body></html>
