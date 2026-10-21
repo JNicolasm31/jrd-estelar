@@ -197,6 +197,19 @@ details.rule summary{font-size:13px;color:var(--orange-ink)}
       <p class="hint">También puede tocar cada barra de la gráfica para sumar o quitar una hora.</p>
     </div>
 
+    <fieldset class="field"><legend>Forma de participar en RD</legend>
+      <div class="seg" id="waySeg">
+        <input type="radio" name="way" id="w-par" value="paradas" checked><label for="w-par">Paradas / mantenimientos</label>
+        <input type="radio" name="way" id="w-aut" value="auto"><label for="w-aut">Equipos de autogeneración</label>
+      </div>
+      <div id="autoBox" hidden style="display:none;flex-direction:column;gap:10px;margin-top:6px">
+        <label class="field" style="gap:4px"><span class="lbl">Costo de generación ($/kWh)</span><input type="number" id="gen" min="0" step="10" value="900" inputmode="decimal"></label>
+        <label class="field" style="gap:4px"><span class="lbl">Tarifa de energía que se deja de comprar a la red ($/kWh)</span><input type="number" id="tar" min="0" step="10" value="700" inputmode="decimal"></label>
+        <p class="hint">Con autogeneración, la energía a reducir se genera en sitio: se descuenta su costo de generación y se suma el ahorro de no consumirla de la red. Los valores iniciales son de referencia; reemplácelos por los reales de cada hotel.</p>
+      </div>
+      <p class="hint" id="wayHint">Paradas o mantenimientos: la energía a reducir es la que el hotel deja de consumir, sin costo adicional.</p>
+    </fieldset>
+
     <fieldset class="field"><legend>Energía a reducir</legend>
       <div class="seg" id="modeSeg">
         <input type="radio" name="mode" id="m-pct" value="pct" checked><label for="m-pct">% de la línea base</label>
@@ -218,7 +231,7 @@ details.rule summary{font-size:13px;color:var(--orange-ink)}
         <p class="hint">Ejemplo: se compromete con 1.000 kWh. Si falla por 50 kWh (5 %), no paga nada. Si falla por 100 kWh (10 %), paga 30 % del precio RD × 100 kWh. Durante los primeros 6 meses del programa (noviembre de 2026 a abril de 2027) no existe penalidad; desde mayo de 2027 se aplica.</p>
       </details>
     </div>
-    <p class="note">Se descuenta margen JULIA-RD del 8 % y GMF 4 × 1.000 (0,4 %) sobre el ingreso bruto, y la penalidad si hay desviación. Las horas y la reducción valen para todos los días en que participe.</p>
+    <p class="note">Se descuenta margen JULIA-RD del 6 % y GMF 4 × 1.000 (0,4 %) sobre el ingreso bruto, y la penalidad si hay desviación. Con autogeneración también se resta el costo de generación y se suma el ahorro en la tarifa de energía. Las horas y la reducción valen para todos los días en que participe.</p>
   </section>
 
   <div class="stack">
@@ -239,8 +252,10 @@ details.rule summary{font-size:13px;color:var(--orange-ink)}
         <thead><tr><th>Concepto</th><th id="thDay">Promedio por día elegido</th><th>Total del mes</th></tr></thead>
         <tbody>
           <tr><td>Ingreso bruto RD</td><td id="gD"></td><td id="gM"></td></tr>
-          <tr><td>Margen JULIA-RD · 8 %</td><td id="mD"></td><td id="mM"></td></tr>
+          <tr><td>Margen JULIA-RD · 6 %</td><td id="mD"></td><td id="mM"></td></tr>
           <tr><td>GMF · 4 × 1.000</td><td id="fD"></td><td id="fM"></td></tr>
+          <tr id="rowGen" hidden><td>Costo de generación</td><td id="gnD"></td><td id="gnM"></td></tr>
+          <tr id="rowSav" hidden><td>Ahorro en tarifa de energía</td><td id="svD"></td><td id="svM"></td></tr>
           <tr><td id="pnLbl">Penalidad por desviación · 30 %</td><td id="pnD"></td><td id="pnM"></td></tr>
           <tr class="total"><td>Ingreso neto</td><td id="nD"></td><td id="nM"></td></tr>
         </tbody></table></div>
@@ -304,7 +319,7 @@ details.rule summary{font-size:13px;color:var(--orange-ink)}
     <p class="hint" style="margin:0">Ingreso = LBC kWh-día × días × precio (USD/MWh) × TRM ÷ 1000, menos el margen de JULIA-RD y el GMF (4 × 1.000). La LBC kWh-día es la LBC diaria registrada en JRD de la frontera seleccionada, en el tipo de día de mayor LBC.</p>
     <div class="ddvin">
       <label class="field"><span class="lbl">TRM de referencia (15 de octubre de 2026)</span><input type="number" id="trm" value="3197.65" min="0" step="0.01" inputmode="decimal"><small style="display:block;margin-top:6px;color:var(--muted);font-size:13px">COP por USD · última TRM del mes anterior, valor predeterminado (modificable)</small></label>
-      <div class="field"><span class="lbl">Margen JULIA-RD</span><div class="fixed">8 %</div></div>
+      <div class="field"><span class="lbl">Margen JULIA-RD</span><div class="fixed">6 %</div></div>
       <div class="field"><span class="lbl">GMF</span><div class="fixed">4 × 1.000</div></div>
     </div>
     <div class="scroll"><table class="parttbl ddv">
@@ -336,7 +351,7 @@ const MONTHS=[];for(let y=2026;y<=2027;y++)for(let m=1;m<=12;m++){if(y===2026&&m
 const TYPES=DAYS.concat([['Festivo','Festivo']]);
 const WN=['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'];
 const WKEY=['Lunes','Martes','Miercoles','Jueves','Viernes','Sabado','Domingo'];
-const S={day:'Viernes',sel:new Set([18,19,20]),mode:'pct',pct:60,dev:0,grace:true,kwh:2000,price:861,month:'2026-11',dates:new Set()};
+const S={day:'Viernes',sel:new Set([18,19,20]),mode:'pct',pct:60,dev:0,grace:true,kwh:2000,price:861,way:'paradas',gen:900,tar:700,month:'2026-11',dates:new Set()};
 const $=id=>document.getElementById(id);
 const nf=new Intl.NumberFormat('es-CO',{maximumFractionDigits:0});
 const pesos=v=>(v<0?'−':'')+'$'+nf.format(Math.abs(Math.round(v)));
@@ -364,8 +379,8 @@ function calc(day,sel){
     const fail=Math.min(S.dev,r);
     if(fail>r*TOL/100)penalty+=0.30*S.price*fail;
   }
-  const gross=E*S.price;
-  return {red,E,gross,penalty,margin:gross*MARGIN,gmf:gross*GMF,net:gross*(1-MARGIN-GMF)};
+  const gross=E*S.price,auto=S.way==='auto',gen=auto?E*S.gen:0,sav=auto?E*S.tar:0;
+  return {red,E,gross,penalty,gen,sav,margin:gross*MARGIN,gmf:gross*GMF,net:gross*(1-MARGIN-GMF)-gen+sav};
 }
 
 const inGrace=ym=>S.grace&&ym<GRACE_END;
@@ -424,18 +439,18 @@ function render(focusDs){lbcWarn();
   const days=monthDays(S.month),cnt={},avail={};
   TYPES.forEach(t=>{cnt[t[0]]=0;avail[t[0]]=0});
   days.forEach(x=>{avail[x.type]++;if(S.dates.has(x.ds))cnt[x.type]++});
-  let tE=0,tG=0,tMg=0,tF=0,tN=0,tDays=0,tP=0,tPr=0;
-  TYPES.forEach(t=>{const k=t[0],n=cnt[k],c=per[k];tE+=c.E*n;tG+=c.gross*n;tMg+=c.margin*n;tF+=c.gmf*n;tP+=pen(c,S.month)*n;tPr+=c.penalty*n;tN+=netIn(c,S.month)*n;tDays+=n});
+  let tE=0,tG=0,tMg=0,tF=0,tN=0,tDays=0,tP=0,tPr=0,tGen=0,tSav=0;
+  TYPES.forEach(t=>{const k=t[0],n=cnt[k],c=per[k];tE+=c.E*n;tG+=c.gross*n;tMg+=c.margin*n;tF+=c.gmf*n;tGen+=c.gen*n;tSav+=c.sav*n;tP+=pen(c,S.month)*n;tPr+=c.penalty*n;tN+=netIn(c,S.month)*n;tDays+=n});
   const c=per[S.day];
-  $('heroLbl').textContent='Total de '+monthName(S.month).toLowerCase()+', después de margen y GMF';
+  $('heroLbl').textContent='Total de '+monthName(S.month).toLowerCase()+(S.way==='auto'?', después de margen, GMF, costo de generación y ahorro en tarifa':', después de margen y GMF');
   $('netMonth').textContent=M(tN);
   $('netDay').textContent=tDays===1?'1 día elegido en el calendario.':tDays+' días elegidos en el calendario.';
   $('kE').textContent=nf.format(tE);$('kD').textContent=tDays;$('kH').textContent=S.sel.size;
   $('kK').textContent=tE>0?pesos(tN/tE):'—';
   $('thDay').textContent=tDays>0?(tDays===1?'Un día elegido':'Promedio por día elegido'):'Un '+dayName(S.day).toLowerCase();
-  const A=tDays>0?{E:tE/tDays,gross:tG/tDays,margin:tMg/tDays,gmf:tF/tDays,pen:tP/tDays,net:tN/tDays}:{E:c.E,gross:c.gross,margin:c.margin,gmf:c.gmf,pen:pen(c,S.month),net:netIn(c,S.month)};
+  const A=tDays>0?{E:tE/tDays,gross:tG/tDays,margin:tMg/tDays,gmf:tF/tDays,gen:tGen/tDays,sav:tSav/tDays,pen:tP/tDays,net:tN/tDays}:{E:c.E,gross:c.gross,margin:c.margin,gmf:c.gmf,gen:c.gen,sav:c.sav,pen:pen(c,S.month),net:netIn(c,S.month)};
   const set=(a,b,v,vm)=>{$(a).textContent=pesos(v);$(b).textContent=pesos(vm)};
-  set('gD','gM',A.gross,tG);set('mD','mM',-A.margin,-tMg);set('fD','fM',-A.gmf,-tF);set('pnD','pnM',-A.pen,-tP);set('nD','nM',A.net,tN);
+  set('gD','gM',A.gross,tG);set('mD','mM',-A.margin,-tMg);set('fD','fM',-A.gmf,-tF);set('gnD','gnM',-A.gen,-tGen);set('svD','svM',A.sav,tSav);const au=S.way==='auto';$('rowGen').hidden=!au;$('rowSav').hidden=!au;set('pnD','pnM',-A.pen,-tP);set('nD','nM',A.net,tN);
   $('kED').textContent=nf.format(A.E)+' kWh/día';
   $('kEH').textContent=S.sel.size?nf.format(A.E/S.sel.size)+' kWh/h promedio':'Elija horas';
   $('kEDl').textContent=tDays>0?'energía a reducir por día':'elija días en el calendario';
@@ -535,6 +550,9 @@ $('modeSeg').addEventListener('change',e=>{S.mode=e.target.value;$('pctBox').hid
 $('pctRange').addEventListener('input',e=>{S.pct=+e.target.value;$('pct').value=S.pct;render()});
 $('pct').addEventListener('input',e=>{S.pct=Math.min(100,num(e.target,0));$('pctRange').value=S.pct;render()});
 $('kwh').addEventListener('input',e=>{S.kwh=num(e.target,0);render()});
+document.querySelectorAll('input[name=way]').forEach(r=>r.addEventListener('change',e=>{S.way=e.target.value;const a=S.way==='auto';$('autoBox').hidden=!a;$('autoBox').style.display=a?'flex':'none';$('wayHint').hidden=a;render()}));
+$('gen').addEventListener('input',e=>{S.gen=num(e.target,0);render()});
+$('tar').addEventListener('input',e=>{S.tar=num(e.target,0);render()});
 $('price').addEventListener('input',e=>{S.price=num(e.target,0);render()});
 $('grace').addEventListener('change',e=>{S.grace=e.target.checked;render()});
 $('dev').addEventListener('input',e=>{S.dev=num(e.target,0);render()});
